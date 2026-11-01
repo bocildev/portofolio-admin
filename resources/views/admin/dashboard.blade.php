@@ -782,6 +782,7 @@ async function handleCoreUpload(inputElem, targetInputId, folder, statusSpanId, 
     const originalText = statusSpan ? statusSpan.textContent : 'Unggah';
 
     if (statusSpan) statusSpan.textContent = 'Memproses...';
+    if (typeof startAdminLoading === 'function') startAdminLoading();
 
     const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
 
@@ -826,6 +827,7 @@ async function handleCoreUpload(inputElem, targetInputId, folder, statusSpanId, 
         showToast('Terjadi kesalahan jaringan: ' + err.message, 'error');
     } finally {
         if (statusSpan) statusSpan.textContent = originalText;
+        if (typeof stopAdminLoading === 'function') stopAdminLoading();
         inputElem.value = '';
     }
 }

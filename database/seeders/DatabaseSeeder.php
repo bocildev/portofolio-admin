@@ -46,6 +46,11 @@ class DatabaseSeeder extends Seeder
                     'url' => '/cv/Frontend_Moch_Adam_Athallahrich.pdf',
                 ],
             ],
+            'education' => [
+                'school' => 'SMK Telkom Malang',
+                'major' => 'Software Engineering (Rekayasa Perangkat Lunak)',
+                'period' => '2016 — 2019',
+            ],
         ]);
 
         // 2. Skills Config
@@ -254,7 +259,37 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        // 5. Projects (5 Case Studies)
+        // 5. Stats Config
+        MotionConfig::setValue('stats', [
+            ['value' => 6, 'suffix' => '+ Thn', 'label' => 'Pengalaman Industri', 'detail' => 'Sejak 2018 (Intern, Junior Dev hingga Fullstack di Telkomsigma)'],
+            ['value' => 10, 'suffix' => '+', 'label' => 'Framework & Bahasa Utama', 'detail' => 'Vue 2/3, Nuxt 2/3, Flutter, React, CI3, Laravel, .NET, Android'],
+            ['value' => 25, 'suffix' => '+ Modul', 'label' => 'Sistem Enterprise & POS', 'detail' => 'HCM MANGO, Performance Appraisal, Meikarta, POS & Sales'],
+            ['value' => 14, 'suffix' => ' Tools', 'label' => 'Ekosistem Engineering', 'detail' => 'Docker, Oracle, Toad SQL, DBeaver, Navicat, Antigravity, Cursor'],
+        ]);
+
+        // 6. Role Lenses Config
+        MotionConfig::setValue('role_lenses', [
+            ['id' => 'all', 'label' => 'All Expertise', 'badge' => 'Full Spectrum', 'headline' => 'Fullstack & Frontend Motion Engineer', 'summary' => 'Menggabungkan arsitektur aplikasi enterprise (Telkomsigma & Visionet), antarmuka reaktif Vue/Nuxt, dan ekosistem mobile Flutter/Android.'],
+            ['id' => 'frontend', 'label' => 'Frontend & Web UI', 'badge' => 'Vue · Nuxt · React · Angular', 'headline' => 'Frontend Architect & Technical Researcher', 'summary' => 'Spesialis pembangunan antarmuka modern menggunakan Vue 2/3, Nuxt 2/3, React JS, AngularTS, Buefy, dan TailwindCSS serta riset teknis frontend.'],
+            ['id' => 'fullstack', 'label' => 'Fullstack & Backend', 'badge' => 'CI3 · Laravel · .NET · Oracle', 'headline' => 'Enterprise Fullstack & Database Engineer', 'summary' => 'Berpengalaman membangun sistem HCM, Performance Appraisal, POS, dan Warehouse Sales dengan PHP Native, CodeIgniter, Laravel, .NET, Oracle, MySQL & SQL Server.'],
+            ['id' => 'mobile', 'label' => 'Mobile Apps', 'badge' => 'Flutter · Android Native', 'headline' => 'Cross-Platform & Native Mobile Developer', 'summary' => 'Merancang aplikasi mobile pembayaran online, company profile, dan sistem kasir POS menggunakan Flutter dan Android Native (Java/XML).'],
+        ]);
+
+        // 7. Certifications Config
+        MotionConfig::setValue('certifications', [
+            ['title' => 'SMK Telkom Malang — Software Engineering', 'issuer' => 'SMK Telkom Malang', 'year' => '2019', 'badge' => 'RPL Graduate', 'detail' => 'Kompetensi inti rekayasa perangkat lunak, algoritma, pemrograman berorientasi objek, basis data relasional, dan arsitektur web.'],
+            ['title' => 'Technical Researcher & Frontend Specialist', 'issuer' => 'PT. Sigma Cipta Caraka (Telkomsigma)', 'year' => '2020 — Sekarang', 'badge' => 'Enterprise Active', 'detail' => 'Evaluasi teknologi antarmuka korporasi, standardisasi komponen Vue/Nuxt, dan pemeliharaan aplikasi internal skala besar.'],
+            ['title' => 'Fullstack POS & Android Developer', 'issuer' => 'PT. Ara Infra Indo', 'year' => '2022 — 2023', 'badge' => 'Production POS', 'detail' => 'Implementasi arsitektur kasir Point of Sale berbasis Android Native Java/XML dan backend CodeIgniter 3.'],
+        ]);
+
+        // 8. Hobbies Config
+        MotionConfig::setValue('hobbies', [
+            ['title' => 'Exploring New Frameworks', 'description' => 'Eksplorasi mendalam teknologi frontend, mobile (Flutter), dan AI-assisted engineering.', 'image' => '/hobbies/programming.webp'],
+            ['title' => 'Touring & Riding', 'description' => 'Menjelajahi suasana baru untuk menjaga perspektif kreatif tetap segar.', 'image' => '/hobbies/riding.webp'],
+            ['title' => 'Music Enthusiast', 'description' => 'Playlist koding favorit: MAN WITH A MISSION, HONNE, Forester, Milet, dan YOASOBI.', 'image' => '/hobbies/negative-space-headphones-black-white-corey-blaz.webp'],
+        ]);
+
+        // 9. Projects (5 Case Studies)
         $projects = [
             [
                 'project_key' => 'mango-hcm',

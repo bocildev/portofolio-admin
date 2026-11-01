@@ -75,15 +75,17 @@ class PortfolioAdminController extends Controller
                 ['label' => 'Experience Scope', 'value' => (string) $request->input('spec_experience', 'Enterprise & POS (6+ Yrs)')],
             ];
         }
-        $data['techSpecs'] = $techSpecs;
-        $data['cityTag'] = (string) ($request->input('cityTag') ?: 'SURABAYA, ID');
+        $existing = MotionConfig::getValue('profile', []);
+        $merged = array_merge($existing, array_filter($data, fn ($v) => $v !== null));
+        $merged['techSpecs'] = $techSpecs;
+        $merged['cityTag'] = (string) ($request->input('cityTag') ?: 'SURABAYA, ID');
 
-        MotionConfig::setValue('profile', $data);
+        MotionConfig::setValue('profile', $merged);
 
         return response()->json([
             'success' => true,
             'message' => 'Profil berhasil disimpan.',
-            'profile' => $data,
+            'profile' => $merged,
         ]);
     }
 
