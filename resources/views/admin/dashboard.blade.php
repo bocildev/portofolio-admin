@@ -321,9 +321,12 @@
 
         <div id="experiences-container" class="space-y-4">
             @forelse($experiences as $idx => $exp)
-            <div class="p-6 rounded-2xl bg-[#0d111a] border border-[#1e293b] space-y-4 relative group" data-idx="{{ $idx }}">
+            <div class="p-6 rounded-2xl bg-[#0d111a] border border-[#1e293b] space-y-4 relative group transition-all hover:border-slate-700" data-idx="{{ $idx }}" draggable="true" ondragstart="handleExpDragStart(event, {{ $idx }})" ondragover="handleExpDragOver(event)" ondrop="handleExpDrop(event, {{ $idx }})" ondragend="handleExpDragEnd(event)">
                 <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-4 border-b border-[#1e293b]">
                     <div class="flex items-start gap-3.5">
+                        <div class="flex items-center text-slate-500 group-hover:text-cyan-400 cursor-grab active:cursor-grabbing shrink-0 self-center" title="Seret untuk mengubah urutan">
+                            <i data-lucide="grip-vertical" class="w-4 h-4"></i>
+                        </div>
                         <div class="w-10 h-10 rounded-xl bg-[#131b2e] border border-cyan-500/20 flex items-center justify-center shrink-0 overflow-hidden">
                             @if(!empty($exp['logo']))
                                 <img src="{{ $exp['logo'] }}" alt="{{ $exp['company'] }}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
@@ -333,7 +336,12 @@
                             @endif
                         </div>
                         <div class="space-y-1">
-                            <h4 class="text-base font-bold text-white">{{ $exp['role'] ?? 'Peran Pekerjaan' }}</h4>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-[#131b2e] text-cyan-400 border border-cyan-500/30" title="Posisi Urutan Publik">
+                                    #{{ str_pad($idx + 1, 2, '0', STR_PAD_LEFT) }}
+                                </span>
+                                <h4 class="text-base font-bold text-white">{{ $exp['role'] ?? 'Peran Pekerjaan' }}</h4>
+                            </div>
                             <div class="flex flex-wrap items-center gap-2 text-xs font-mono text-slate-300">
                                 <span class="text-cyan-300 font-semibold">{{ $exp['company'] ?? '' }}</span>
                                 @if(!empty($exp['location']))
@@ -352,6 +360,17 @@
                         <span class="px-2.5 py-1 rounded-lg bg-sky-500/10 text-sky-300 border border-sky-500/30 text-xs font-mono font-bold">
                             {{ $exp['period'] ?? '' }}
                         </span>
+
+                        <!-- Tombol Urutan Naik & Turun -->
+                        <div class="flex items-center bg-[#07090e] rounded-xl border border-[#1e293b] p-0.5">
+                            <button type="button" onclick="moveExperience({{ $idx }}, -1)" class="p-1.5 text-slate-400 hover:text-cyan-400 hover:bg-[#131b2e] rounded-lg disabled:opacity-20 disabled:hover:text-slate-400 disabled:hover:bg-transparent transition cursor-pointer" {{ $idx === 0 ? 'disabled' : '' }} title="Geser ke Atas (Prioritas Lebih Tinggi)">
+                                <i data-lucide="chevron-up" class="w-3.5 h-3.5"></i>
+                            </button>
+                            <button type="button" onclick="moveExperience({{ $idx }}, 1)" class="p-1.5 text-slate-400 hover:text-cyan-400 hover:bg-[#131b2e] rounded-lg disabled:opacity-20 disabled:hover:text-slate-400 disabled:hover:bg-transparent transition cursor-pointer" {{ $idx === count($experiences) - 1 ? 'disabled' : '' }} title="Geser ke Bawah">
+                                <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+
                         <button onclick="openExperienceModal({{ $idx }})" class="p-2 rounded-xl bg-[#131b2e] hover:bg-[#1e293b] text-slate-300 hover:text-white border border-[#1e293b] transition cursor-pointer" title="Edit Pengalaman">
                             <i data-lucide="edit-3" class="w-4 h-4 text-cyan-400"></i>
                         </button>
@@ -722,6 +741,53 @@ async function handleSaveExperienceForm(e) {
 
     await persistExperiences(submitBtn);
     closeExperienceModal();
+}
+
+async function moveExperience(idx, direction) {
+    const targetIdx = idx + direction;
+    if (targetIdx < 0 || targetIdx >= experiencesList.length) return;
+
+    // Tukar posisi elemen
+    const temp = experiencesList[idx];
+    experiencesList[idx] = experiencesList[targetIdx];
+    experiencesList[targetIdx] = temp;
+
+    if (typeof startAdminLoading === 'function') startAdminLoading();
+    showToast(`Menggeser urutan pengalaman #${idx + 1} ke #${targetIdx + 1}...`, 'info');
+
+    await persistExperiences();
+}
+
+// Drag & Drop Handlers untuk Pengalaman Kerja
+let draggedExpIdx = null;
+
+function handleExpDragStart(e, idx) {
+    draggedExpIdx = idx;
+    e.dataTransfer.effectAllowed = 'move';
+    e.currentTarget.classList.add('opacity-50', 'border-cyan-400');
+}
+
+function handleExpDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+}
+
+async function handleExpDrop(e, targetIdx) {
+    e.preventDefault();
+    if (draggedExpIdx === null || draggedExpIdx === targetIdx) return;
+
+    const movedItem = experiencesList.splice(draggedExpIdx, 1)[0];
+    experiencesList.splice(targetIdx, 0, movedItem);
+
+    if (typeof startAdminLoading === 'function') startAdminLoading();
+    showToast(`Urutan pengalaman diperbarui: #${draggedExpIdx + 1} → #${targetIdx + 1}`, 'info');
+
+    await persistExperiences();
+}
+
+function handleExpDragEnd(e) {
+    e.currentTarget.classList.remove('opacity-50', 'border-cyan-400');
+    draggedExpIdx = null;
 }
 
 async function handleDeleteExperience(idx) {
